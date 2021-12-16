@@ -1,0 +1,124 @@
+---
+title: "Assessment 1"
+author: "Erdenebileg s4662976"
+date: "16/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# RMarkdown editing
+
+This is an *R Markdown* document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <https://rmarkdown.rstudio.com/lesson-8.html>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+#Q6
+```{r}
+library(tidyverse)
+fastfood<-read.csv("fastfood_calories.csv")
+```
+#Q7
+
+```{r}
+head(fastfood, 10) 
+knitr::kable(head(fastfood[, 1:5],10))
+```
+#Q7
+```{r}
+knitr::kable((subset(fastfood, calories>1000)))
+```
+#Q8
+```{r}
+dont_eat_this<-knitr::kable((subset(fastfood, total_fat>40 & total_carb>80))) 
+print(dont_eat_this)
+```
+#Q9
+```{r}
+dont_eat_this<-knitr::kable((subset(fastfood, total_fat>40 & total_carb>80))) 
+print(dont_eat_this)
+```
+#Q10
+```{r}
+knitr::kable((subset(fastfood, restaurant=='Mcdonalds'))) 
+print(dont_eat_this)
+```
+
+#Q11
+```{r}
+library(skimr)
+skim(fastfood) %>%  summary() 
+```
+
+#Q12
+```{r}
+knitr::kable(fastfood %>% group_by(restaurant) %>%  count(restaurant) %>% arrange(desc(n)))
+```
+#Q13
+```{r}
+knitr::kable(fastfood %>% group_by(restaurant) %>% summarise(calories = mean(calories)))
+```
+#Q14
+```{r}
+average_calories<-knitr::kable(fastfood %>% group_by(restaurant) %>% summarise(calories = mean(calories)))
+```
+#Q15
+```{r}
+fastfood %>% group_by(restaurant) %>% summarise(total_fat = sum(total_fat)) %>%    
+ggplot() +   aes(x = restaurant, fill = restaurant, weight = total_fat) +   geom_bar() +   scale_fill_hue() +   labs(x = "Restaurant Type", y = "Total fats", title = "Horizontal Bar Chart", subtitle = "Total fat per restaurant", caption = "Total fat per restaurant", fill = "Name")  
+```
+<p>there are various restaurants which serves diffrent types of food for customers. Each type of food is served by the restaurant is having different amount of fats. The highest fat is for burger king and lower fat is for Chick Fil-A. That means if people are prefering low fat food thn they can purchase from Chick Fil-A</p>
+
+#Q16
+
+```{r}
+max_total_fat<-knitr::kable(fastfood %>% group_by(restaurant) %>% summarise(maxtotal_fat = max(total_fat)))
+```
+
+#Q17
+```{r}
+tt<-head((subset(fastfood, restaurant=='Mcdonalds')),57)
+p<-ggplot(data.frame(tt),aes(sugar, protein)) 
+p+ geom_point()
+```
+
+#Q18
+```{r}
+food <- factor(fastfood$restaurant)
+levels(food)
+
+```
+#Q19
+
+```{r}
+labels=c("low", "med", "high")
+calories_type<-cut_number(fastfood$calories,3,labels)
+```
+#Q20
+```{r}
+fastfood %>% group_by(restaurant) %>%    
+ggplot() +   aes(x = fastfood$restaurant, fill = fastfood$restaurant, weight = calories) +   geom_bar() +   scale_fill_hue() +   labs(x = "Restaurant Type", y = "Calories Type", title = "Calories for each restaurant", subtitle = "Calories for each restaurant", caption = "Calories for each restaurant", fill = "Name")  
+```
+#Q21
+```{r}
+trans_fat_percent<-knitr::kable(fastfood %>% summarise(trans_fat_percent =trans_fat/total_fat*100 ))
+```
+#Q22
+```{r}
+fastfood %>% group_by(restaurant) %>%    
+ggplot() +   aes(x = fastfood$restaurant, fill = fastfood$restaurant, weight = trans_fat) +   geom_bar() +   scale_fill_hue() +   labs(x = "Restaurant", y = "trans_fat", title = "trans_fat for each restaurant", subtitle = "trans_fat for each restaurant", caption = "trans_fat for each restaurant", fill = "Name ") 
+```
+#task23
+```{r}
+knitr::kable(fastfood %>% group_by(restaurant) %>% summarise(total_fat = mean(total_fat)))
+```
+#Q24
+
+```{r}
+fastfood %>% group_by(restaurant) %>%    
+ggplot() +   aes(x = fastfood$restaurant, fill = fastfood$restaurant, weight = total_fat) +   geom_bar() +   scale_fill_hue() +   labs(x = "Restaurant", y = "total_fat", title = "total_fat for each restaurant", subtitle = "total_fat for each restaurant", caption = "total_fat for each restaurant", fill = "Name") 
+```
+
