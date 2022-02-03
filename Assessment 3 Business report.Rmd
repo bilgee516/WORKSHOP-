@@ -1,0 +1,82 @@
+---
+title: "assessment 3"
+author: "Erdenebileg, Tanishka"
+date: "2/3/2022"
+output: html_document
+---
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+---
+title: "Media Franchise Revenues"
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+theme_set(theme_light())
+media_franchises <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-07-02/media_franchises.csv")
+```
+
+
+
+### Franchise-level
+
+What are the biggest franchises?
+
+```{r}
+library(glue)
+top_franchises <- franchises %>%
+  mutate(franchise = glue("{ franchise } ({ year_created })")) %>%
+  top_n(20, total_revenue)
+media_franchises %>%
+  mutate(franchise = glue("{ franchise } ({ year_created })")) %>%
+  semi_join(top_franchises, by = "franchise") %>%
+  mutate(franchise = fct_reorder(franchise, revenue, sum),
+         revenue_category = fct_reorder(revenue_category, revenue, sum)) %>%
+  ggplot(aes(franchise, revenue)) +
+  geom_col(aes(fill = revenue_category)) +
+  geom_text(aes(y = total_revenue,
+                label = paste0(scales::dollar(total_revenue, accuracy = 1), "B")),
+            data = top_franchises,
+            hjust = 0) +
+  scale_y_continuous(labels = scales::dollar) +
+  expand_limits(y = 100) +
+  coord_flip() +
+  theme(panel.grid.major.y = element_blank()) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  labs(title = "What are the most profitable franchises of all time?",
+       fill = "Category",
+       x = "",
+       y = "Revenue (Billions)")
+```
+
+
+
+```{r}
+franchises %>%
+  ggplot(aes(year_created, total_revenue)) +
+  geom_point(aes(size = total_revenue, color = original_media)) +
+  geom_text(aes(label = franchise), check_overlap = TRUE, vjust = 1, hjust = 1) +
+  expand_limits(x = 1910) +
+  labs(title = "When were the 'great' franchises created?")
+```
+
+
+
+```{r}
+original_media_revenue_categories %>%
+  mutate(revenue_category = fct_rev(revenue_category),
+         original_media = fct_rev(original_media)) %>%
+  ggplot(aes(revenue_category, original_media, fill = revenue)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "white", high = "red", labels = scales::dollar) +
+  theme(panel.grid = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(fill = "Revenue (billions)")
+```
+
